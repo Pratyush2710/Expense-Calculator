@@ -8,7 +8,7 @@ const ExpenseList = ({ expenses }) => {
     <>
       <ul className="list">
         {expenses.map((expense) => {
-          return <Item id={expense.id} expense={expense} />;
+          return <Item key={expense.id} id={expense.id} expense={expense} />;
         })}
       </ul>
       {expenses.length > 0 && (

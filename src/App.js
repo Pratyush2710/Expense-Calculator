@@ -19,28 +19,44 @@ function App() {
   const [charge, setCharge] = useState("");
   //  single amount
   const [amount, setAmount] = useState("");
+  //  alert
+  const [alert, setAlert] = useState({ show: false });
   //      FUNCTIONS
   const handleCharge = (e) => {
     setCharge(e.target.value);
   };
+
   const handleAmount = (e) => {
     setAmount(e.target.value);
   };
+
+  const handleAlert = ({ type, text }) => {
+    setAlert({ show: true, type, text });
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 10000);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (charge !== "" && amount > 0) {
       const singleExpense = { id: uuidv4(), charge, amount };
       setExpense([...expenses, singleExpense]);
+      handleAlert({ type: "success", text: "Item added successfully" });
       setCharge("");
       setAmount("");
     } else {
-      // handlesalert
+      handleAlert({
+        type: "danger",
+        text: `Cannot leave the field empty. Try again!`,
+      });
     }
     console.log(charge, amount);
   };
   return (
     <>
-      <Alert />
+      {alert.show && <Alert type={alert.type} text={alert.text} />}
+
       <h1>Expense Calculator</h1>
       <main className="App">
         <ExpenseForm
