@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
+import logo from "./components/expenselogo.svg";
+import logo1 from "./components/expenselogo1.svg";
 import ExpenseList from "./components/ExpenseList";
 import ExpenseForm from "./components/ExpenseForm";
 import Alert from "./components/Alert";
@@ -48,7 +50,7 @@ function App() {
     setAlert({ show: true, type, text });
     setTimeout(() => {
       setAlert({ show: false });
-    }, 10000);
+    }, 4000);
   };
 
   const handleSubmit = (e) => {
@@ -102,8 +104,14 @@ function App() {
   return (
     <>
       {alert.show && <Alert type={alert.type} text={alert.text} />}
-
-      <h1>Expense Calculator</h1>
+      <div className="card text-white bg-info mb-3">
+        <div className="card-header">
+          <h1>
+            <img className="logo" src={logo1} alt="logo" />
+            Expense Calculator
+          </h1>
+        </div>
+      </div>
       <main className="App">
         <ExpenseForm
           charge={charge}
