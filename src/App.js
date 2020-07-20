@@ -14,7 +14,7 @@ const initialExpense = [
 function App() {
   //        STATE VALUES
   //  all expense, add expense
-  const [expenses, setExpense] = useState(initialExpense);
+  const [expenses, setExpenses] = useState(initialExpense);
   //  single expense
   const [charge, setCharge] = useState("");
   //  single amount
@@ -41,7 +41,7 @@ function App() {
     e.preventDefault();
     if (charge !== "" && amount > 0) {
       const singleExpense = { id: uuidv4(), charge, amount };
-      setExpense([...expenses, singleExpense]);
+      setExpenses([...expenses, singleExpense]);
       handleAlert({ type: "success", text: "Item added successfully" });
       setCharge("");
       setAmount("");
@@ -51,8 +51,25 @@ function App() {
         text: `Cannot leave the field empty. Try again!`,
       });
     }
-    console.log(charge, amount);
   };
+  //clear list
+  const clearList = () => {
+    setExpenses([]);
+    handleAlert({ type: "danger", text: "All items deleted successfully" });
+  };
+
+  //handle delete
+  const handleDelete = (id) => {
+    let tempExpenses = expenses.filter((item) => item.id !== id);
+    setExpenses(tempExpenses);
+    handleAlert({ type: "danger", text: "Item deleted successfully" });
+  };
+
+  //handel Edit\
+  const handleEdit = (id) => {
+    console.log(`handleEdit : ${id}`);
+  };
+
   return (
     <>
       {alert.show && <Alert type={alert.type} text={alert.text} />}
@@ -66,7 +83,12 @@ function App() {
           handleCharge={handleCharge}
           handleSubmit={handleSubmit}
         />
-        <ExpenseList expenses={expenses} />
+        <ExpenseList
+          expenses={expenses}
+          handleDelete={handleDelete}
+          handleEdit={handleEdit}
+          clearList={clearList}
+        />
       </main>
       <h1>
         Total Expenditure :{" "}
