@@ -1,18 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import ExpenseList from "./components/ExpenseList";
 import ExpenseForm from "./components/ExpenseForm";
 import Alert from "./components/Alert";
 import { v4 as uuidv4 } from "uuid";
 
-const initialExpense = [
-  { id: uuidv4(), charge: "House Rent", amount: 1600 },
-  { id: uuidv4(), charge: "Vehicle", amount: 1000 },
-  { id: uuidv4(), charge: "Medical", amount: 1200 },
-];
+const initialExpense = localStorage.getItem("expenses")
+  ? JSON.parse(localStorage.getItem("expenses"))
+  : [];
+// const initialExpense = [
+//   { id: uuidv4(), charge: "House Rent", amount: 1600 },
+//   { id: uuidv4(), charge: "Vehicle", amount: 1000 },
+//   { id: uuidv4(), charge: "Medical", amount: 1200 },
+// ];
 
 function App() {
-  //        STATE VALUES
+  //  ------STATE VALUES------
   //  all expense, add expense
   const [expenses, setExpenses] = useState(initialExpense);
   //  single expense
@@ -21,7 +24,18 @@ function App() {
   const [amount, setAmount] = useState("");
   //  alert
   const [alert, setAlert] = useState({ show: false });
-  //      FUNCTIONS
+  //  edit
+  const [edit, setEdit] = useState(false);
+  //edit expense
+  const [id, setId] = useState(0);
+
+  //  ------useEffect hook ------
+  useEffect(() => {
+    console.log("useEff3ect called");
+    localStorage.setItem("expenses", JSON.stringify(expenses));
+  }, [expenses]);
+
+  //  ------FUNCTIONS------
   const handleCharge = (e) => {
     setCharge(e.target.value);
   };
@@ -40,9 +54,19 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (charge !== "" && amount > 0) {
-      const singleExpense = { id: uuidv4(), charge, amount };
-      setExpenses([...expenses, singleExpense]);
-      handleAlert({ type: "success", text: "Item added successfully" });
+      if (edit) {
+        let tempExpenses = expenses.map((item) => {
+          return item.id === id ? { ...item, charge, amount } : item;
+        });
+        setExpenses(tempExpenses);
+        setEdit(false);
+        handleAlert({ type: "success", text: "Item added successfully" });
+      } else {
+        const singleExpense = { id: uuidv4(), charge, amount };
+        setExpenses([...expenses, singleExpense]);
+        handleAlert({ type: "success", text: "Item added successfully" });
+      }
+
       setCharge("");
       setAmount("");
     } else {
@@ -65,9 +89,14 @@ function App() {
     handleAlert({ type: "danger", text: "Item deleted successfully" });
   };
 
-  //handel Edit\
+  //handel Edit
   const handleEdit = (id) => {
-    console.log(`handleEdit : ${id}`);
+    let expense = expenses.find((item) => item.id === id);
+    let { charge, amount } = expense;
+    setCharge(charge);
+    setAmount(amount);
+    setEdit(true);
+    setId(id);
   };
 
   return (
@@ -82,6 +111,7 @@ function App() {
           handleAmount={handleAmount}
           handleCharge={handleCharge}
           handleSubmit={handleSubmit}
+          edit={edit}
         />
         <ExpenseList
           expenses={expenses}
